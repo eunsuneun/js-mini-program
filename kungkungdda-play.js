@@ -14,11 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
   $write.focus();
   // 게임 시작 함수 생성
   const onStart = () => {
-    if (!word || word[word.length - 1] === newWord[0]) {
+    if ((!word && newWord.length === 3) || (word[word.length - 1] === newWord[0] && newWord.length === 3)) {
       let order = Number($order.textContent);
       word = newWord;
       $word.textContent = word;
-      console.log(word + newWord);
       if (order == num) {
         $order.textContent = 1;
       } else {
@@ -34,11 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const onSaveNewWord = event => {
     newWord = event.target.value;
   };
+  $write.addEventListener("input", onSaveNewWord);
   $next.addEventListener("click", onStart);
   $write.addEventListener("keyup", event => {
     if (event.keyCode == 13) {
       onStart();
     }
   });
-  $write.addEventListener("input", onSaveNewWord);
 });

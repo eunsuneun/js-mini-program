@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // };
   // 시작하는 함수 생성
   const onStart = () => {
-    if (isNaN(outputTotal)) {
+    if (isNaN(outputTotal) || outputTotal == "") {
       alert("참여 인원을 제대로 입력해 주세요 !");
       $inputTotal.value = "";
       $inputTotal.focus();
