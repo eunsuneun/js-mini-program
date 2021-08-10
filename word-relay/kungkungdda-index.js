@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
       $inputTotal.focus();
     } else {
       // alert(`총 ${outputTotal}명이 참여합니다.`);
-      const link = "/kungkungdda-play.html";
+      const link = "./kungkungdda-play.html";
       location.href = link;
       localStorage.setItem("num", outputTotal);
     }
