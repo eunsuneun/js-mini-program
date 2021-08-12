@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $write.focus();
   // 게임 시작 함수 생성
   const onStart = () => {
-    if ((!word && newWord.length === 3) || (word[word.length - 1] === newWord[0] && newWord.length === 3)) {
+    if (newWord.length === 3 && (!word || word[word.length - 1] === newWord[0])) {
       let order = Number($order.textContent);
       word = newWord;
       $word.textContent = word;
