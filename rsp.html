@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가위바위보</title>
+    <style>
+      #pc {
+        width: 142px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="pc"></div>
+    <div>
+      <button id="scissors" class="btn">가위</button>
+      <button id="rock" class="btn">바위</button>
+      <button id="paper" class="btn">보</button>
+    </div>
+    <div id="score"></div>
+    <script>
+      const $pc = document.querySelector("#pc");
+      const $scissors = document.querySelector("#scissors");
+      const $rock = document.querySelector("#rock");
+      const $paper = document.querySelector("#paper");
+      const $score = document.querySelector("#score");
+      const IMG_URL = "./rsp.png";
+      $pc.style.background = `url(${IMG_URL}) no-repeat 13px center / auto 170px`;
+
+      const rspX = {
+        scissors: "13px",
+        rock: "-180px",
+        paper: "-374px",
+      };
+      let pcChoice = "scissors";
+      const fnChangePc = () => {
+        if (pcChoice === "scissors") {
+          //가위일 때
+          pcChoice = "rock";
+        } else if (pcChoice === "rock") {
+          //바위일 때
+          pcChoice = "paper";
+        } else if (pcChoice === "paper") {
+          //보일 때
+          pcChoice = "scissors";
+        }
+        $pc.style.background = `url(${IMG_URL}) no-repeat ${rspX[pcChoice]} center / auto 170px`;
+      };
+
+      let intervalId = setInterval(fnChangePc, 50);
+
+      const scoreTable = {
+        rock: 0,
+        scissors: 1,
+        paper: -1,
+      };
+
+      let clickable = true;
+      let score = 0;
+      let userTotal = 0;
+      let pcTotal = 0;
+      const clickBtn = () => {
+        // 연속클릭버그를 막기 위한 프래그변수
+        if (clickable) {
+          clearInterval(intervalId);
+          clickable = false;
+          // 점수 계산 및 화면 표시
+          const userChoice = event.target.textContent === "바위" ? "rock" : event.target.textContent === "가위" ? "scissors" : "paper";
+          const userScore = scoreTable[userChoice];
+          const pcScore = scoreTable[pcChoice];
+          const diff = userScore - pcScore;
+          console.log(pcChoice, userChoice, userScore, pcScore, diff);
+          let message;
+          //2,-1은 승리조건이고, -2,1은 패배조건. (점수표 참고)
+          if ([2, -1].includes(diff)) {
+            score += 1;
+            message = "승리 🤟🏻";
+            userTotal += 1;
+          } else if (diff === 0) {
+            message = "무승부 🤝";
+          } else if ([-2, 1].includes(diff)) {
+            score -= 1;
+            message = "패배 😭";
+            pcTotal += 1;
+          }
+
+          if (userTotal >= 3) {
+            $score.append(`최종 ${message}! 점수는 ${userTotal} : ${pcTotal}`, document.createElement("br"));
+          } else if (pcTotal >= 3) {
+            $score.append(`최종 ${message}! 점수는 ${userTotal} : ${pcTotal}`, document.createElement("br"));
+          } else {
+            setTimeout(() => {
+              clickable = true;
+              intervalId = setInterval(fnChangePc, 50);
+            }, 1000);
+            $score.append(`${message}! 점수는 ${userTotal} : ${pcTotal}`, document.createElement("br"));
+          }
+        }
+      };
+
+      $scissors.addEventListener("click", clickBtn);
+      $rock.addEventListener("click", clickBtn);
+      $paper.addEventListener("click", clickBtn);
+    </script>
+  </body>
+</html>
