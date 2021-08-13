@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>반응속도 구하기</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      #screen {
+        width: 100%;
+        height: 50vh;
+        font-size: 20px;
+        text-align: center;
+        line-height: 50vh;
+        color: #fff;
+      }
+      #screen.ready {
+        background: darkblue;
+      }
+      #screen.set {
+        background: orangered;
+      }
+      #screen.go {
+        background: greenyellow;
+        color: #333;
+      }
+      .row {
+        background: #f4f5f6;
+        display: flex;
+      }
+      .column {
+        width: 33.3333%;
+        padding: 20px;
+        text-align: center;
+        line-height: 2;
+      }
+      .column + .column {
+        border-left: 1px solid #ddd;
+      }
+      .tit {
+        display: inline-block;
+        width: 100%;
+        font-weight: 700;
+      }
+      .cont {
+        /* 기록되어질 때 display: block 되도록 js에서 제어 */
+        display: none;
+        margin: 10px 0 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="screen" class="ready">클릭하면 시작됩니다 🤟🏻</div>
+    <div class="row">
+      <div id="result" class="column">
+        <span class="tit">반응속도 기록</span>
+        <div class="cont"></div>
+      </div>
+      <div id="average" class="column">
+        <span class="tit">평균속도 기록</span>
+        <div class="cont"></div>
+      </div>
+      <div id="top" class="column">
+        <span class="tit">TOP5 기록</span>
+        <div class="cont"></div>
+      </div>
+    </div>
+    <script>
+      // 초기 변수
+      const $screen = document.querySelector("#screen");
+      const $result = document.querySelector("#result .cont");
+      const $average = document.querySelector("#average .cont");
+      const $top = document.querySelector("#top .cont");
+      window.document.oncontextmenu = new Function("return false");
+      window.document.onselectstart = new Function("return false");
+      window.document.ondragstart = new Function("return false");
+
+      // 데이터 저장 변수
+      let startTime;
+      let endTime;
+      const records = [];
+      let timeoutId;
+      $screen.addEventListener("click", event => {
+        if (event.target.classList.contains("ready")) {
+          // 파랑 화면일 때 클릭하면
+          // 빨강 화면으로 바뀌는 코드
+          $screen.classList.replace("ready", "set");
+          $screen.textContent = "초록색 화면이 나오면 클릭하세요 ! ✌🏻";
+          // 빨강화면으로 바뀐 후에 랜덤 초로 초록화면,타이머 실행하는 코드
+          timeoutId = setTimeout(() => {
+            startTime = new Date();
+            $screen.classList.replace("set", "go");
+            $screen.textContent = "지금이에요 ! 👉🏻";
+          }, Math.floor(Math.random() * 1000) + 2000); // 2000~3000 사이
+        } else if ($screen.classList.contains("set")) {
+          // 빨강 화면일 때 클릭하면
+          // 파랑 화면으로 돌아감
+          clearTimeout(timeoutId);
+          $screen.classList.replace("set", "ready");
+          $screen.textContent = "성급하시네요 🤭 클릭하면 시작됩니다 🤟🏻";
+        } else if ($screen.classList.contains("go")) {
+          // .cont를 display:none에서 block 으로 바꿔주고 시작 (여백때문ㅎ)
+          document.querySelectorAll(".cont")[0].style.display = "block";
+          document.querySelectorAll(".cont")[1].style.display = "block";
+          document.querySelectorAll(".cont")[2].style.display = "block";
+          // 초록 화면일 때 클릭하면
+          endTime = new Date();
+          const current = endTime - startTime;
+          $result.append(`${current}ms`, document.createElement("br"));
+          // 평균 구하기
+          records.push(current);
+          const average = Math.floor(records.reduce((a, c) => a + c) / records.length);
+          $average.append(`${average}ms`, document.createElement("br"));
+          // top5 보여주기
+          $top.innerHTML = ""; // 순위 초기화 시켜주면서 다시 보여주기 위해서
+          const topFive = records.sort((a, b) => a - b).slice(0, 5);
+          topFive.forEach((top, index) => {
+            $top.append(`${index + 1}위 : ${top}ms`, document.createElement("br"));
+          });
+          // startTime, endTime 초기화 (안해도 되지만 혹시나)
+          startTime = null;
+          endTime = null;
+          // 다시 파랑화면으로 바뀌는 코드
+          $screen.classList.replace("go", "ready");
+          $screen.textContent = "클릭하면 시작됩니다 🤟🏻";
+        }
+      });
+    </script>
+  </body>
+</html>
