@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>틱택토 게임</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      td {
+        border: 1px solid #000;
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+        font-weight: 100;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const { body } = document; //const body = document.body; 와 같음
+      const $table = document.createElement("table");
+      const $result = document.createElement("div");
+      const dataRows = []; // 행(tr) 데이터 생성
+      let turn = "O";
+
+      const checkWinner = target => {
+        const rowIndex = target.parentNode.rowIndex;
+        const cellIndex = target.cellIndex;
+        console.log(`rowIndex : ${rowIndex} ,cellIndex : ${cellIndex}`);
+        // 세 칸 다 채워졌는지 체크
+        let hasWinner = false;
+        // 가로줄 검사
+        if (dataRows[rowIndex][0].textContent === turn && dataRows[rowIndex][1].textContent === turn && dataRows[rowIndex][2].textContent === turn) {
+          hasWinner = true;
+        }
+        // 세로줄 검사
+        if (dataRows[0][cellIndex].textContent === turn && dataRows[1][cellIndex].textContent === turn && dataRows[2][cellIndex].textContent === turn) {
+          hasWinner = true;
+        }
+        // 대각선 검사
+        if (dataRows[0][0].textContent === turn && dataRows[1][1].textContent === turn && dataRows[2][2].textContent === turn) {
+          hasWinner = true;
+        }
+        if (dataRows[0][2].textContent === turn && dataRows[1][1].textContent === turn && dataRows[2][0].textContent === turn) {
+          hasWinner = true;
+        }
+        return hasWinner;
+      };
+
+      const checkWinnerAndDraw = target => {
+        const hasWinner = checkWinner(target);
+        // 승자가 있으면
+        if (hasWinner) {
+          $result.textContent = `${turn}님이 승리!`;
+          $table.removeEventListener("click", callback);
+          return;
+        }
+        // 무승부 일 때
+        const draw = dataRows.flat().every(cell => cell.textContent);
+        if (draw) {
+          $result.textContent = "무승부";
+          return;
+        }
+        turn = turn === "O" ? "X" : "O";
+      };
+
+      let clickable = true;
+
+      const callback = event => {
+        if (!clickable) return;
+        if (event.target.textContent) return; // 이미 글자가 있으면 return; 없으면 아래 실행
+        event.target.textContent = turn;
+        // 승부 검사와 턴 바꾸기
+        checkWinnerAndDraw(event.target);
+        if (turn === "X") {
+          // pc차례일 때
+          clickable = false;
+          setTimeout(() => {
+            const emptyCells = dataRows.flat().filter(v => !v.textContent); // 비어있는 것들 선택
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            console.log(emptyCells);
+            console.log(randomCell);
+            randomCell.textContent = "X";
+            // 승부 검사와 턴 바꾸기
+            checkWinnerAndDraw(randomCell);
+            clickable = true;
+          }, 300);
+        }
+      };
+
+      for (let i = 0; i < 3; i++) {
+        const $tr = document.createElement("tr"); // 행(tr) 출력화면 생성
+        const dataCells = []; // 열 데이터 생성
+        for (j = 0; j < 3; j++) {
+          const $td = document.createElement("td"); // td 출력화면 생성
+          dataCells.push($td); // 열 데이터에 td 출력화면 넣어줌
+          $tr.append($td); // tr에 td 화면 출력
+        }
+        dataRows.push(dataCells); // 행 데이터에 열 데이터 넣어줌
+        $table.append($tr); // table에 tr 화면 출력
+      }
+
+      $table.addEventListener("click", callback); // td 클릭 이벤트 (이벤트 버블링으로 $table에 이벤트 줌)
+      body.append($table); // table 화면 출력
+      body.append($result); // result 화면 출력
+    </script>
+  </body>
+</html>
