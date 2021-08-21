@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To do list</title>
+    <link rel="stylesheet" href="https://eunsuneun.github.io/reset-nomalize-css/reset-nomalize.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+      .hidden {
+        overflow: hidden;
+        display: block;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+        clip: rect(0, 0, 0, 0);
+      }
+      .wrap {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: #f4f5f6;
+        font-size: 1.8rem;
+        font-weight: 300;
+        color: #333;
+      }
+      .todolist {
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 70%;
+        max-width: 42rem;
+        height: 70%;
+        margin: auto;
+        border-radius: 3rem;
+        background: #fff;
+        box-shadow: 0px 0px 2rem 0.5px rgba(0, 0, 0, 0.1);
+      }
+      .todo-top {
+        padding: 3rem;
+        border-bottom: 1px solid #f4f5f6;
+      }
+      .todo-top .date {
+        font-size: 2.8rem;
+      }
+      .todo-top .day {
+        margin: 1rem 0 3rem;
+        color: #999;
+      }
+      .todo-top .todo-num {
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: #1fb6ff;
+      }
+      .todo-lst {
+        overflow: auto;
+        height: calc(100% - 25.1rem);
+        padding: 3rem;
+      }
+      .todo-itm ~ .todo-itm {
+        margin: 2rem 0 0 0;
+      }
+      .todo-itm input {
+        display: none;
+      }
+      .todo-itm label {
+        display: inline-block;
+        cursor: pointer;
+        font-size: 0;
+        vertical-align: middle;
+      }
+      .todo-itm label span {
+        font-size: 2rem;
+        vertical-align: middle;
+      }
+      .todo-itm label:before {
+        display: inline-block;
+        content: "";
+        width: 2rem;
+        height: 2rem;
+        margin: 0 1rem 0 0;
+        border: 1px solid #333;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
+      /* input:checked */
+      .todo-itm input:checked + label:before {
+        border: 1px solid #1fb6ff;
+
+        background: url(./icons.png) no-repeat 0.4rem 0.5rem / 3.5rem;
+      }
+      .todo-itm input:checked + label span {
+        position: relative;
+        color: #1fb6ff;
+      }
+      .todo-itm input:checked + label span::after {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        content: "";
+        display: block;
+        width: 100%;
+        height: 1px;
+        background: #1fb6ff;
+      }
+      .todo-itm .del {
+        width: 2rem;
+        height: 2rem;
+        margin: 0 0 0 1rem;
+        background: url(./icons.png) no-repeat -27px 4px / 40px;
+        vertical-align: middle;
+      }
+      .todo-add {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        padding: 2rem 3rem;
+        transition: all 1s;
+      }
+      .todo-add input {
+        width: 0px;
+        border-radius: 30px;
+        font-size: 1.6rem;
+        transition: all 0.5s;
+        outline: none;
+      }
+      .todo-add button {
+        display: block;
+        width: 5rem;
+        height: 5rem;
+        margin: 0 auto;
+        border: 1px solid #1fb6ff;
+        border-radius: 50%;
+        transition: all 0.5s;
+      }
+      .todo-add button i {
+        display: block;
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto;
+        background: url(./icons.png) no-repeat -2.5rem 0.4rem;
+      }
+      /* todo-add.active */
+      .todo-add.active input {
+        flex: 2;
+        padding: 0 20px;
+        margin-right: 2rem;
+        border: 1px solid #1fb6ff;
+      }
+      .todo-add.active button {
+        background: #1fb6ff;
+      }
+      .todo-add.active button i {
+        background-position: -2.5rem -2.4rem;
+      }
+    </style>
+    <script></script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="todolist">
+        <h1 class="hidden">할 일 목록</h1>
+        <div class="todo-top">
+          <h2 class="date">2020년 1월 23일</h2>
+          <p class="day">목요일</p>
+          <p class="todo-num"><span class="complete">0</span> / <span class="total">0</span> 완료</p>
+        </div>
+        <ul class="todo-lst">
+          <li class="todo-itm">
+            <input type="checkbox" id="chk1" />
+            <label for="chk1"><span>프로젝트 생성하기</span></label>
+            <button class="del"><span class="hidden">삭제</span></button>
+          </li>
+        </ul>
+        <div class="todo-add">
+          <input type="text" placeholder="할 일을 작성하세요." />
+          <button><span class="hidden">추가하기</span><i class="icon"></i></button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
