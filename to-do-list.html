@@ -46,7 +46,7 @@
         padding: 3rem;
         border-bottom: 1px solid #f4f5f6;
       }
-      .todo-top .date {
+      .todo-top .days {
         font-size: 2.8rem;
       }
       .todo-top .day {
@@ -70,49 +70,42 @@
         display: none;
       }
       .todo-itm label {
+        position: relative;
         display: inline-block;
         cursor: pointer;
         font-size: 0;
         vertical-align: middle;
       }
       .todo-itm label span {
+        display: inline-block;
+        padding: 0 0 0 3rem;
         font-size: 2rem;
-        vertical-align: middle;
+        line-height: 1.3;
       }
       .todo-itm label:before {
-        display: inline-block;
+        position: absolute;
+        top: 3px;
+        left: 0;
         content: "";
         width: 2rem;
         height: 2rem;
-        margin: 0 1rem 0 0;
         border: 1px solid #333;
         border-radius: 50%;
-        vertical-align: middle;
       }
       /* input:checked */
       .todo-itm input:checked + label:before {
         border: 1px solid #1fb6ff;
-
         background: url(./icons.png) no-repeat 0.4rem 0.5rem / 3.5rem;
       }
       .todo-itm input:checked + label span {
         position: relative;
         color: #1fb6ff;
-      }
-      .todo-itm input:checked + label span::after {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        content: "";
-        display: block;
-        width: 100%;
-        height: 1px;
-        background: #1fb6ff;
+        text-decoration: line-through;
       }
       .todo-itm .del {
         width: 2rem;
         height: 2rem;
-        margin: 0 0 0 1rem;
+        margin: -0.3rem 0 0 1rem;
         background: url(./icons.png) no-repeat -27px 4px / 40px;
         vertical-align: middle;
       }
@@ -162,28 +155,122 @@
         background-position: -2.5rem -2.4rem;
       }
     </style>
-    <script></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const $year = document.querySelector(".year");
+        const $month = document.querySelector(".month");
+        const $date = document.querySelector(".date");
+        const $day = document.querySelector(".day");
+        const $total = document.querySelector(".total");
+        const $complete = document.querySelector(".complete");
+        const $todoAdd = document.querySelector(".todo-add");
+        const $addInput = document.querySelector(".todo-add input");
+        const $addBtn = document.querySelector(".todo-add button");
+        const $addBtnActive = document.querySelector(".todo-add.active button");
+        const $todoLst = document.querySelector(".todo-lst");
+
+        // 초기 세팅
+        $addInput.focus();
+
+        // 상단 날짜
+        const date = new Date();
+        const week = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+        $year.textContent = date.getFullYear();
+        $month.textContent = date.getMonth() - 1;
+        $date.textContent = date.getDate();
+        $day.textContent = week[date.getDay()];
+
+        // addTodo 이벤트
+        let i = 0;
+        let total = 0;
+        let complete = 0;
+        const addTodo = () => {
+          i++;
+          total++;
+          if ($addInput.value) {
+            // li.todo-itm 생성
+            const $todoItm = document.createElement("li");
+            $todoItm.className = "todo-itm";
+            $todoLst.appendChild($todoItm);
+            // input 생성
+            const $todoItmChk = document.createElement("input");
+            $todoItmChk.type = "checkbox";
+            $todoItmChk.id = "chk" + i;
+            $todoItm.appendChild($todoItmChk);
+            // label 생성
+            const $todoItmLabel = document.createElement("label");
+            $todoItmLabel.htmlFor = "chk" + i;
+            $todoItm.appendChild($todoItmLabel);
+            // check했을 때
+            $todoItmChk.addEventListener("change", () => {
+              if ($todoItmChk.checked) {
+                complete++;
+                $complete.textContent = complete;
+              } else {
+                complete--;
+                $complete.textContent = complete;
+              }
+            });
+            // label > span 생성
+            const $todoItmLabelSpan = document.createElement("span");
+            $todoItmLabelSpan.textContent = $addInput.value;
+            $todoItmLabel.appendChild($todoItmLabelSpan);
+            // button.del 생성
+            const $todoItmDel = document.createElement("button");
+            $todoItmDel.className = "del";
+            $todoItmLabelSpan.appendChild($todoItmDel);
+            // 삭제 버튼 눌렀을 때
+            $todoItmDel.addEventListener("click", () => {
+              $todoItm.parentNode.removeChild($todoItm);
+              if ($todoItmChk.checked) {
+                total--;
+                $total.textContent = total;
+                complete--;
+                $complete.textContent = complete;
+              } else {
+                total--;
+                $total.textContent = total;
+              }
+            });
+            // 작성란 내용 삭제
+            $addInput.value = "";
+            // 작성란 포커스 회기
+            $addInput.focus();
+            // total
+            $total.textContent = total;
+            $todoLst.scrollTop = $todoLst.scrollHeight;
+          }
+        };
+
+        // 추가하기 버튼 클릭하여 input 보여주기
+        // $addBtn.addEventListener("click", event => {
+        //   event.preventDefault();
+        //   $todoAdd.classList.add("active");
+        //   $addInput.focus();
+        // });
+
+        // active된 추가하기 버튼 클릭 시
+        $todoAdd.addEventListener("submit", event => {
+          event.preventDefault();
+          addTodo();
+        });
+      });
+    </script>
   </head>
   <body>
     <div class="wrap">
       <div class="todolist">
         <h1 class="hidden">할 일 목록</h1>
         <div class="todo-top">
-          <h2 class="date">2020년 1월 23일</h2>
-          <p class="day">목요일</p>
+          <h2 class="days"><span class="year"></span>년 <span class="month"></span>월 <span class="date"></span>일</h2>
+          <p class="day">요일</p>
           <p class="todo-num"><span class="complete">0</span> / <span class="total">0</span> 완료</p>
         </div>
-        <ul class="todo-lst">
-          <li class="todo-itm">
-            <input type="checkbox" id="chk1" />
-            <label for="chk1"><span>프로젝트 생성하기</span></label>
-            <button class="del"><span class="hidden">삭제</span></button>
-          </li>
-        </ul>
-        <div class="todo-add">
+        <ul class="todo-lst"></ul>
+        <form class="todo-add active">
           <input type="text" placeholder="할 일을 작성하세요." />
           <button><span class="hidden">추가하기</span><i class="icon"></i></button>
-        </div>
+        </form>
       </div>
     </div>
   </body>
